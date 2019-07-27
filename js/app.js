@@ -11,34 +11,97 @@ request.addEventListener("click", function() {
         peopleReq.addEventListener("load", function() {
             if (this.status !== 200) {
                 const errorEl = document.createElement("h2");
-                errorEl.innerHTML = `Error ${this.status}.`;
+                errorEl.innerHTML = `Error ${this.status}`;
+                container.appendChild(errorEl)
                 if (this.status === 404) {
                     const noInfo = document.createElement("h3");
-                    noInfo.innerHTML = `No Information found.`;
-                    errorEl.appendChild(noInfo);
+                    noInfo.innerHTML = `${inputID} not found.`;
+                    container.appendChild(noInfo);
                 }
-            }
-    
-            const personName = document.createElement("h2");
-            const responseText = JSON.parse(this.responseText);
-            personName.innerHTML = responseText.name;
-            container.appendChild(personName);
-        
-            const personGender = document.createElement("p");
-            personGender.innerHTML = responseText.gender;
-            container.appendChild(personGender);
-        
-            const personSpecies = document.createElement("p");
-            const speciesReq = new XMLHttpRequest();
-            speciesReq.addEventListener("load", function() {
+            } else {
+                const personName = document.createElement("h2");
                 const responseText = JSON.parse(this.responseText);
-                personSpecies.innerHTML = responseText.name;
-                container.appendChild(personSpecies);
-            });
-            speciesReq.open("GET", responseText.species.toString());
-            speciesReq.send();
+                personName.innerHTML = responseText.name;
+                container.appendChild(personName);
+            
+                const personGender = document.createElement("p");
+                personGender.innerHTML = responseText.gender;
+                container.appendChild(personGender);
+            
+                const personSpecies = document.createElement("p");
+                const speciesReq = new XMLHttpRequest();
+                speciesReq.addEventListener("load", function() {
+                    const responseText = JSON.parse(this.responseText);
+                    personSpecies.innerHTML = responseText.name;
+                    container.appendChild(personSpecies);
+                });
+                speciesReq.open("GET", responseText.species.toString());
+                speciesReq.send();
+            }
         });
         peopleReq.open("GET", "https://swapi.co/api/people/" + inputID);
         peopleReq.send();
+    }
+
+    if (input === "planets") {
+        const planetsReq = new XMLHttpRequest();
+        planetsReq.addEventListener("load", function() {
+            if (this.status !== 200) {
+                const errorEl = document.createElement("h2");
+                errorEl.innerHTML = `Error ${this.status}`;
+                container.appendChild(errorEl)
+                if (this.status === 404) {
+                    const noInfo = document.createElement("h3");
+                    noInfo.innerHTML = `${inputID} not found.`;
+                    container.appendChild(noInfo);
+                }
+            } else {
+                const planetsName = document.createElement("h2");
+                const responseText = JSON.parse(this.responseText);
+                planetsName.innerHTML = responseText.name;
+                container.appendChild(planetsName);
+
+                const planetsTerrain = document.createElement("p");
+                planetsTerrain.innerHTML = responseText.terrain;
+                container.appendChild(planetsTerrain);
+
+                const planetsPopulation = document.createElement("p");
+                planetsPopulation.innerHTML = responseText.population;
+                container.appendChild(planetsPopulation);
+            }
+        });
+        planetsReq.open("GET", "https://swapi.co/api/planets/" + inputID);
+        planetsReq.send();
+    }
+
+    if(input === "starships") {
+        const starshipsReq = new XMLHttpRequest();
+        starshipsReq.addEventListener("load", function() {
+            if (this.status !== 200) {
+                const errorEl = document.createElement("h2");
+                errorEl.innerHTML = `Error ${this.status}`;
+                container.appendChild(errorEl)
+                if (this.status === 404) {
+                    const noInfo = document.createElement("h3");
+                    noInfo.innerHTML = `${inputID} not found.`;
+                    container.appendChild(noInfo);
+                }
+            } else {
+                const starshipsName = document.createElement("h2");
+                const responseText = JSON.parse(this.responseText);
+                starshipsName.innerHTML = responseText.name;
+                container.appendChild(starshipsName);
+
+                const starshipsManufacturer = document.createElement("p");
+                starshipsManufacturer.innerHTML = responseText.manufacturer;
+                container.appendChild(starshipsManufacturer);
+
+                const starshipsClass = document.createElement("p");
+                starshipsClass.innerHTML = responseText.starship_class;
+                container.appendChild(starshipsClass);
+            }
+        })
+        starshipsReq.open("GET", "https://swapi.co/api/starships/" + inputID);
+        starshipsReq.send();
     }
 });
