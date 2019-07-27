@@ -1,41 +1,44 @@
 "use strict";
 
-const people = new XMLHttpRequest();
-people.addEventListener('load', function(){
-    const personList = JSON.parse(this.responseText);
-    const results = personList.results;
-    for(let i = 0; i < results.length; i++) {
-        let human = results[i];
-        console.log(`People${[i + 1]}: ${human.name}`);
+const request = document.querySelector("#requestResourceButton");
+request.addEventListener("click", function() {
+    const input = document.querySelector("#resourceType").value;
+    const inputID = document.querySelector("#resourceId").value;
+    const container = document.querySelector("#contentContainer");
+  
+    if (input === "people") {
+        const peopleReq = new XMLHttpRequest();
+        peopleReq.addEventListener("load", function() {
+            if (this.status !== 200) {
+                const errorEl = document.createElement("h2");
+                errorEl.innerHTML = `Error ${this.status}.`;
+                if (this.status === 404) {
+                    const noInfo = document.createElement("h3");
+                    noInfo.innerHTML = `No Information found.`;
+                    errorEl.appendChild(noInfo);
+                }
+            }
+    
+            const personName = document.createElement("h2");
+            const responseText = JSON.parse(this.responseText);
+            personName.innerHTML = responseText.name;
+            container.appendChild(personName);
+        
+            const personGender = document.createElement("p");
+            personGender.innerHTML = responseText.gender;
+            container.appendChild(personGender);
+        
+            const personSpecies = document.createElement("p");
+            const speciesReq = new XMLHttpRequest();
+            speciesReq.addEventListener("load", function() {
+                const responseText = JSON.parse(this.responseText);
+                personSpecies.innerHTML = responseText.name;
+                container.appendChild(personSpecies);
+            });
+            speciesReq.open("GET", responseText.species.toString());
+            speciesReq.send();
+        });
+        peopleReq.open("GET", "https://swapi.co/api/people/" + inputID);
+        peopleReq.send();
     }
-})
-people.open("GET", "https://swapi.co/api/people");
-people.send();
-
-
-const planets = new XMLHttpRequest();
-planets.addEventListener("load", function(){
-    const planetList = JSON.parse(this.responseText);
-    const results = planetList.results;
-    for(let i = 0; i < results.length; i++) {
-        let planet = results[i];
-        console.log(`Planet${[i + 1]}: ${planet.name}`);
-    }
-})
-planets.open("GET", "https://swapi.co/api/planets/");
-planets.send();
-
-
-const starship = new XMLHttpRequest();
-starship.addEventListener("load", function() {
-    // console.log(JSON.parse(this.responseText));
-    const starshipList = JSON.parse(this.responseText);
-    const results = starshipList.results;
-    for(let i = 0; i < results.length; i++) {
-        let starships = results[i];
-        console.log(`Starship ${[i + 1]}: ${starships.name}`);
-    }
-
-})
-starship.open("GET", "https://swapi.co/api/starships/");
-starship.send();
+});
