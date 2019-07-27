@@ -99,6 +99,23 @@ request.addEventListener("click", function() {
                 const starshipsClass = document.createElement("p");
                 starshipsClass.innerHTML = responseText.starship_class;
                 container.appendChild(starshipsClass);
+
+                const filmsUL = document.createElement("ul");
+                filmsUL.classList = "filmUL";
+                container.appendChild(filmsUL);
+
+                const filmReq = new XHMHttpRequest();
+                filmReq.addEventListener("load", function() {
+                    const result = JSON.parse(this.responseText);
+                    for(let i = 0; i < films.length; i++) {
+                        const filmsLI = document.createElement("li");
+                        filmsLI.classList = "filmLI"
+                        filmsLI.innerHTML = result[i].films;
+                        filmsUL.appendChild(filmsLI);
+                    }
+                })
+                filmReq.open("GET", films[i]);
+                filmReq.send();
             }
         })
         starshipsReq.open("GET", "https://swapi.co/api/starships/" + inputID);
