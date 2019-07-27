@@ -1,7 +1,7 @@
 "use strict";
 
-const request = document.querySelector("#requestResourceButton");
-request.addEventListener("click", function() {
+const requestSWAPI = document.querySelector("#requestResourceButton");
+requestSWAPI.addEventListener("click", function() {
     const input = document.querySelector("#resourceType").value;
     const inputID = document.querySelector("#resourceId").value;
     const container = document.querySelector("#contentContainer");
@@ -15,7 +15,7 @@ request.addEventListener("click", function() {
                 container.appendChild(errorEl)
                 if (this.status === 404) {
                     const noInfo = document.createElement("h3");
-                    noInfo.innerHTML = `${inputID} not found.`;
+                    noInfo.innerHTML = `Detail: ${inputID} not found.`;
                     container.appendChild(noInfo);
                 }
             } else {
@@ -52,7 +52,7 @@ request.addEventListener("click", function() {
                 container.appendChild(errorEl)
                 if (this.status === 404) {
                     const noInfo = document.createElement("h3");
-                    noInfo.innerHTML = `${inputID} not found.`;
+                    noInfo.innerHTML = `Detail: ${inputID} not found.`;
                     container.appendChild(noInfo);
                 }
             } else {
@@ -68,6 +68,24 @@ request.addEventListener("click", function() {
                 const planetsPopulation = document.createElement("p");
                 planetsPopulation.innerHTML = responseText.population;
                 container.appendChild(planetsPopulation);
+
+                for(let i = 0; i < responseText.films.length; i++) {
+                    const filmReq = new XMLHttpRequest();
+                    filmReq.addEventListener("load", function() {
+                        const responseText = JSON.parse(this.responseText);
+
+                        const filmsUL = document.createElement("ul");
+                        filmsUL.classList = "filmsUL";
+                        container.appendChild(filmsUL);
+
+                        const filmsLI = document.createElement("li");
+                        filmsLI.classList = "filmsLI"
+                        filmsLI.innerHTML = responseText.title;
+                        filmsUL.appendChild(filmsLI);
+                    })
+                    filmReq.open("GET", responseText.films[i]);
+                    filmReq.send();
+                }
             }
         });
         planetsReq.open("GET", "https://swapi.co/api/planets/" + inputID);
@@ -83,7 +101,7 @@ request.addEventListener("click", function() {
                 container.appendChild(errorEl)
                 if (this.status === 404) {
                     const noInfo = document.createElement("h3");
-                    noInfo.innerHTML = `${inputID} not found.`;
+                    noInfo.innerHTML = `Detail: ${inputID} not found.`;
                     container.appendChild(noInfo);
                 }
             } else {
@@ -100,22 +118,24 @@ request.addEventListener("click", function() {
                 starshipsClass.innerHTML = responseText.starship_class;
                 container.appendChild(starshipsClass);
 
-                const filmsUL = document.createElement("ul");
-                filmsUL.classList = "filmUL";
-                container.appendChild(filmsUL);
 
-                const filmReq = new XHMHttpRequest();
-                filmReq.addEventListener("load", function() {
-                    const result = JSON.parse(this.responseText);
-                    for(let i = 0; i < films.length; i++) {
+                for(let i = 0; i < responseText.films.length; i++) {
+                    const filmReq = new XMLHttpRequest();
+                    filmReq.addEventListener("load", function() {
+                        const responseText = JSON.parse(this.responseText);
+
+                        const filmsUL = document.createElement("ul");
+                        filmsUL.classList = "filmUL";
+                        container.appendChild(filmsUL);
+
                         const filmsLI = document.createElement("li");
                         filmsLI.classList = "filmLI"
-                        filmsLI.innerHTML = result[i].films;
+                        filmsLI.innerHTML = responseText.title;
                         filmsUL.appendChild(filmsLI);
-                    }
-                })
-                filmReq.open("GET", films[i]);
-                filmReq.send();
+                    })
+                    filmReq.open("GET", responseText.films[i]);
+                    filmReq.send();
+                }
             }
         })
         starshipsReq.open("GET", "https://swapi.co/api/starships/" + inputID);
